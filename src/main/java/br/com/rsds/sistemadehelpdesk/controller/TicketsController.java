@@ -3,7 +3,6 @@ package br.com.rsds.sistemadehelpdesk.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,23 +15,19 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.rsds.sistemadehelpdesk.model.Tickets;
-import br.com.rsds.sistemadehelpdesk.repository.TicketsRepository;
 import br.com.rsds.sistemadehelpdesk.service.TicketsService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/api/Tickets-list")
 @Validated
 public class TicketsController {
 
-	private final TicketsRepository ticketRepository;
 	private final TicketsService ticketsService;
 
-	public TicketsController(TicketsRepository ticketRepository, TicketsService ticketsService) {
-		this.ticketRepository = ticketRepository;
+	public TicketsController(TicketsService ticketsService) {
 		this.ticketsService = ticketsService;
 	}
 
@@ -42,9 +37,8 @@ public class TicketsController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Tickets> FindById(@PathVariable @NotNull @Positive Long id) {
-		return ticketsService.FindById(id).map(recordFind -> ResponseEntity.ok(recordFind))
-				.orElse(ResponseEntity.notFound().build());
+	public Tickets FindById(@PathVariable @NotNull @Positive Long id) {
+		return ticketsService.FindById(id);
 	}
 
 	@PostMapping
@@ -54,17 +48,14 @@ public class TicketsController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Tickets> update(@PathVariable @NotNull @Positive Long id,
+	public Tickets update(@PathVariable @NotNull @Positive Long id,
 			@RequestBody @Valid Tickets record) {
-		return ticketsService.update(id, record).map(recordFound -> ResponseEntity.ok(recordFound))
-				.orElse(ResponseEntity.notFound().build());
+		return ticketsService.update(id, record);
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> remove(@PathVariable @NotNull @Positive Long id) {
-		if (ticketsService.remove(id)) {
-			return ResponseEntity.noContent().<Void>build();
-		}
-		return ResponseEntity.notFound().build();
+	@ResponseStatus(code = HttpStatus.NO_CONTENT)
+	public void remove(@PathVariable @NotNull @Positive Long id) {
+		ticketsService.remove(id);
 	}
 }

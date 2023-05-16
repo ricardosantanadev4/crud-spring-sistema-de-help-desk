@@ -1,18 +1,13 @@
 package br.com.rsds.sistemadehelpdesk.service;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import br.com.rsds.sistemadehelpdesk.exception.RecordNotFoundException;
 import br.com.rsds.sistemadehelpdesk.model.Tickets;
 import br.com.rsds.sistemadehelpdesk.repository.TicketsRepository;
 import jakarta.validation.Valid;
@@ -29,23 +24,19 @@ public class TicketsService {
 		this.ticketRepository = ticketRepository;
 	}
 
-	@GetMapping
 	public List<Tickets> list() {
 		return ticketRepository.findAll();
 	}
 
-	@GetMapping("/{id}")
-	public Optional<Tickets> FindById(@PathVariable @NotNull @Positive Long id) {
-		return ticketRepository.findById(id);
+	public Tickets FindById(@PathVariable @NotNull @Positive Long id) {
+		return ticketRepository.findById(id).orElseThrow(() -> new RecordNotFoundException(id));
 	}
 
-	@PostMapping
 	public Tickets create(@Valid Tickets record) {
 		return this.ticketRepository.save(record);
 	}
 
-	@PutMapping("/{id}")
-	public Optional<Tickets> update(@NotNull @Positive Long id, @RequestBody @Valid Tickets record) {
+	public Tickets update(@NotNull @Positive Long id, @RequestBody @Valid Tickets record) {
 		return ticketRepository.findById(id).map(recordFind -> {
 			recordFind.setAssunto(record.getAssunto());
 			recordFind.setCategoria(record.getCategoria());
@@ -55,14 +46,10 @@ public class TicketsService {
 			recordFind.setCriacao(record.getCriacao());
 			recordFind.setVencimento(record.getVencimento());
 			return ticketRepository.save(recordFind);
-		});
+		}).orElseThrow(() -> new RecordNotFoundException(id));
 	}
 
-	@DeleteMapping("/{id}")
-	public Boolean remove(Long id) {
-		return ticketRepository.findById(id).map(recordFind -> {
-			ticketRepository.deleteById(id);
-			return true;
-		}).orElse(false);
+	public void remove(Long id) {
+		ticketRepository.delete(ticketRepository.findById(id).orElseThrow(() -> new RecordNotFoundException(id)));
 	}
 }
