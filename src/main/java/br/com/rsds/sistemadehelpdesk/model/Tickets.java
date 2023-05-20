@@ -1,14 +1,12 @@
 package br.com.rsds.sistemadehelpdesk.model;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -29,41 +27,41 @@ public class Tickets {
 
 	@NotNull
 	@NotBlank
-	@Column(name = "ASSUNTO")
+	@Column(name = "ASSUNTO", nullable = false)
 	private String assunto;
 
 	@NotNull
 	@NotBlank
-	@Column(name = "CATEGORIA")
+	@Column(name = "CATEGORIA", nullable = false)
 	private String categoria;
 
 	@NotNull
 	@NotBlank
-	@Column(name = "TECNICO")
+	@Column(name = "TECNICO", nullable = false)
 	private String tecnico;
 
 	@NotNull
 	@NotBlank
-	@Column(name = "NIVEL")
+	@Column(name = "NIVEL", nullable = false)
 	private String nivel;
 
 	@NotNull
 	@NotBlank
-	@Column(name = "SOLICITANTE")
+	@Column(name = "SOLICITANTE", nullable = false)
 	private String solicitante;
 
 	@NotNull
 	@NotBlank
-	@Column(name = "CRIACAO")
+	@Column(name = "CRIACAO", nullable = false)
 	private String criacao = LocalDate.now().toString();
 
 	@NotNull
 	@NotBlank
-	@Column(name = "URGENCIA")
+	@Column(name = "URGENCIA", nullable = false)
 	private String urgencia;
 
 	@NotNull
 	@NotBlank
-	@Column(name = "VENCIMENTO")
+	@Column(name = "VENCIMENTO", nullable = false)
 	private String vencimento;
 }
